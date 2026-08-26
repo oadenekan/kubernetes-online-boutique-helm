@@ -1,0 +1,982 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"adservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"adservice"}},"template":{"metadata":{"labels":{"app":"adservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"9555"}],"image":"gcr.io/google-samples/microservices-demo/adservice:v0.8.0","livenessProbe":{"grpc":{"port":9555},"periodSeconds":5},"name":"service","ports":[{"containerPort":9555}],"readinessProbe":{"grpc":{"port":9555},"periodSeconds":5},"resources":{"limits":{"cpu":"300m","memory":"300Mi"},"requests":{"cpu":"200m","memory":"180Mi"}}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: adservice
+    namespace: microservices
+    resourceVersion: "689717"
+    uid: 2f6a760b-cac1-4c73-b1f8-a655c606c7bd
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: adservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: adservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "9555"
+          image: gcr.io/google-samples/microservices-demo/adservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 9555
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 9555
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 9555
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 300m
+              memory: 300Mi
+            requests:
+              cpu: 200m
+              memory: 180Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-07-22T16:35:51Z"
+      lastUpdateTime: "2026-07-22T16:35:51Z"
+      message: ReplicaSet "adservice-5cb44cd5db" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T21:46:08Z"
+      lastUpdateTime: "2026-08-25T21:46:08Z"
+      message: Deployment does not have minimum availability.
+      reason: MinimumReplicasUnavailable
+      status: "False"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 2
+    unavailableReplicas: 1
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"cartservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"cartservice"}},"template":{"metadata":{"labels":{"app":"cartservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"7070"},{"name":"REDIS_ADDR","value":"redis-cart:6379"},{"name":"DISABLE_PROFILER","value":"1"}],"image":"gcr.io/google-samples/microservices-demo/cartservice:v0.8.0","livenessProbe":{"grpc":{"port":7070},"periodSeconds":5},"name":"service","ports":[{"containerPort":7070}],"readinessProbe":{"grpc":{"port":7070},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: cartservice
+    namespace: microservices
+    resourceVersion: "692723"
+    uid: 9b20efdb-b6d4-4f4c-ad47-c9378ac53ce4
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: cartservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: cartservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "7070"
+          - name: REDIS_ADDR
+            value: redis-cart:6379
+          - name: DISABLE_PROFILER
+            value: "1"
+          image: gcr.io/google-samples/microservices-demo/cartservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 7070
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 7070
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 7070
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:32:29Z"
+      message: ReplicaSet "cartservice-785467f78" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-26T18:44:58Z"
+      lastUpdateTime: "2026-08-26T18:44:58Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"checkoutservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"checkoutservice"}},"template":{"metadata":{"labels":{"app":"checkoutservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"5050"},{"name":"PRODUCT_CATALOG_SERVICE_ADDR","value":"productcatalogservice:3550"},{"name":"SHIPPING_SERVICE_ADDR","value":"shippingservice:50051"},{"name":"PAYMENT_SERVICE_ADDR","value":"paymentservice:50051"},{"name":"EMAIL_SERVICE_ADDR","value":"emailservice:5000"},{"name":"CURRENCY_SERVICE_ADDR","value":"currencyservice:7000"},{"name":"CART_SERVICE_ADDR","value":"cartservice:7070"}],"image":"gcr.io/google-samples/microservices-demo/checkoutservice:v0.8.0","livenessProbe":{"grpc":{"port":5050},"periodSeconds":5},"name":"service","ports":[{"containerPort":5050}],"readinessProbe":{"grpc":{"port":5050},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: checkoutservice
+    namespace: microservices
+    resourceVersion: "689621"
+    uid: 5ca9e2c4-ff52-467b-9072-87cafbd03c64
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: checkoutservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: checkoutservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "5050"
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: productcatalogservice:3550
+          - name: SHIPPING_SERVICE_ADDR
+            value: shippingservice:50051
+          - name: PAYMENT_SERVICE_ADDR
+            value: paymentservice:50051
+          - name: EMAIL_SERVICE_ADDR
+            value: emailservice:5000
+          - name: CURRENCY_SERVICE_ADDR
+            value: currencyservice:7000
+          - name: CART_SERVICE_ADDR
+            value: cartservice:7070
+          image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 5050
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 5050
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 5050
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:20Z"
+      lastUpdateTime: "2026-07-17T16:31:32Z"
+      message: ReplicaSet "checkoutservice-7974846c9" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T22:53:24Z"
+      lastUpdateTime: "2026-08-25T22:53:24Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"currencyservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"currencyservice"}},"template":{"metadata":{"labels":{"app":"currencyservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"7000"},{"name":"DISABLE_PROFILER","value":"1"}],"image":"gcr.io/google-samples/microservices-demo/currencyservice:v0.8.0","livenessProbe":{"grpc":{"port":7000},"periodSeconds":5},"name":"service","ports":[{"containerPort":7000}],"readinessProbe":{"grpc":{"port":7000},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: currencyservice
+    namespace: microservices
+    resourceVersion: "689838"
+    uid: ad4f5e3d-2e68-4bc6-ac37-290021ac36cd
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: currencyservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: currencyservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "7000"
+          - name: DISABLE_PROFILER
+            value: "1"
+          image: gcr.io/google-samples/microservices-demo/currencyservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 7000
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 7000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 7000
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:36Z"
+      message: ReplicaSet "currencyservice-7c65c855" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T23:09:50Z"
+      lastUpdateTime: "2026-08-25T23:09:50Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"emailservice","namespace":"microservices"},"spec":{"selector":{"matchLabels":{"app":"emailservice"}},"template":{"metadata":{"labels":{"app":"emailservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"8080"}],"image":"gcr.io/google-samples/microservices-demo/emailservice:v0.8.0","livenessProbe":{"grpc":{"port":8080},"periodSeconds":5},"name":"service","ports":[{"containerPort":8080}],"readinessProbe":{"grpc":{"port":8080},"periodSeconds":5},"resources":{"limits":{"cpu":"200m","memory":"128Mi"},"requests":{"cpu":"100m","memory":"64Mi"}}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: emailservice
+    namespace: microservices
+    resourceVersion: "689855"
+    uid: 0c265928-dc2b-4fe1-ac83-464f233f5af4
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: emailservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: emailservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "8080"
+          image: gcr.io/google-samples/microservices-demo/emailservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 8080
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 8080
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:42Z"
+      message: ReplicaSet "emailservice-c666f8f98" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T23:09:54Z"
+      lastUpdateTime: "2026-08-25T23:09:54Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"frontend","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"frontend"}},"template":{"metadata":{"labels":{"app":"frontend"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"8080"},{"name":"PRODUCT_CATALOG_SERVICE_ADDR","value":"productcatalogservice:3550"},{"name":"CURRENCY_SERVICE_ADDR","value":"currencyservice:7000"},{"name":"CART_SERVICE_ADDR","value":"cartservice:7070"},{"name":"RECOMMENDATION_SERVICE_ADDR","value":"recommendationservice:8080"},{"name":"SHIPPING_SERVICE_ADDR","value":"shippingservice:50051"},{"name":"CHECKOUT_SERVICE_ADDR","value":"checkoutservice:5050"},{"name":"AD_SERVICE_ADDR","value":"adservice:9555"}],"image":"gcr.io/google-samples/microservices-demo/frontend:v0.8.0","livenessProbe":{"httpGet":{"path":"/_healthz","port":8080},"periodSeconds":5},"name":"service","ports":[{"containerPort":8080}],"readinessProbe":{"httpGet":{"path":"/_healthz","port":8080},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 2
+    name: frontend
+    namespace: microservices
+    resourceVersion: "689646"
+    uid: 3803632e-82dd-48dd-b576-f7520241c569
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 5
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: frontend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: frontend
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "8080"
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: productcatalogservice:3550
+          - name: CURRENCY_SERVICE_ADDR
+            value: currencyservice:7000
+          - name: CART_SERVICE_ADDR
+            value: cartservice:7070
+          - name: RECOMMENDATION_SERVICE_ADDR
+            value: recommendationservice:8080
+          - name: SHIPPING_SERVICE_ADDR
+            value: shippingservice:50051
+          - name: CHECKOUT_SERVICE_ADDR
+            value: checkoutservice:5050
+          - name: AD_SERVICE_ADDR
+            value: adservice:9555
+          image: gcr.io/google-samples/microservices-demo/frontend:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /_healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /_healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 5
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:20Z"
+      lastUpdateTime: "2026-07-17T16:31:33Z"
+      message: ReplicaSet "frontend-9bb6c6945" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T22:53:24Z"
+      lastUpdateTime: "2026-08-25T22:53:24Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 5
+    replicas: 5
+    updatedReplicas: 5
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"paymentservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"paymentservice"}},"template":{"metadata":{"labels":{"app":"paymentservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"50051"},{"name":"DISABLE_PROFILER","value":"1"}],"image":"gcr.io/google-samples/microservices-demo/paymentservice:v0.8.0","livenessProbe":{"grpc":{"port":50051},"periodSeconds":5},"name":"service","ports":[{"containerPort":50051}],"readinessProbe":{"grpc":{"port":50051},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: paymentservice
+    namespace: microservices
+    resourceVersion: "689846"
+    uid: 94be125d-9355-43b8-8a6f-cd81b3c6242b
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: paymentservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: paymentservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "50051"
+          - name: DISABLE_PROFILER
+            value: "1"
+          image: gcr.io/google-samples/microservices-demo/paymentservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 50051
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 50051
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 50051
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:36Z"
+      message: ReplicaSet "paymentservice-b98b486f5" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T23:09:50Z"
+      lastUpdateTime: "2026-08-25T23:09:50Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"productcatalogservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"productcatalogservice"}},"template":{"metadata":{"labels":{"app":"productcatalogservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"3550"},{"name":"DISABLE_PROFILER","value":"1"}],"image":"gcr.io/google-samples/microservices-demo/productcatalogservice:v0.8.0","livenessProbe":{"grpc":{"port":3550},"periodSeconds":5},"name":"service","ports":[{"containerPort":3550}],"readinessProbe":{"grpc":{"port":3550},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: productcatalogservice
+    namespace: microservices
+    resourceVersion: "689611"
+    uid: 34f3b3ec-716e-4d76-b079-c5633f2cce9d
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: productcatalogservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: productcatalogservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "3550"
+          - name: DISABLE_PROFILER
+            value: "1"
+          image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 3550
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 3550
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 3550
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:30Z"
+      message: ReplicaSet "productcatalogservice-84c977b797" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T22:53:24Z"
+      lastUpdateTime: "2026-08-25T22:53:24Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"recommendationservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"recommendationservice"}},"template":{"metadata":{"labels":{"app":"recommendationservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"8080"},{"name":"PRODUCT_CATALOG_SERVICE_ADDR","value":"productcatalogservice:3550"},{"name":"DISABLE_PROFILER","value":"1"}],"image":"gcr.io/google-samples/microservices-demo/recommendationservice:v0.8.0","livenessProbe":{"grpc":{"port":8080},"periodSeconds":5},"name":"service","ports":[{"containerPort":8080}],"readinessProbe":{"grpc":{"port":8080},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: recommendationservice
+    namespace: microservices
+    resourceVersion: "689841"
+    uid: 182f8e3b-d038-47e1-87d9-245af9a95ad8
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: recommendationservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: recommendationservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "8080"
+          - name: PRODUCT_CATALOG_SERVICE_ADDR
+            value: productcatalogservice:3550
+          - name: DISABLE_PROFILER
+            value: "1"
+          image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 8080
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 8080
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:37Z"
+      message: ReplicaSet "recommendationservice-6db7fbc845" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T23:09:50Z"
+      lastUpdateTime: "2026-08-25T23:09:50Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"redis-cart","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"redis-cart"}},"template":{"metadata":{"labels":{"app":"redis-cart"}},"spec":{"containers":[{"image":"redis:alpine","livenessProbe":{"initialDelaySeconds":5,"periodSeconds":5,"tcpSocket":{"port":6379}},"name":"redis","ports":[{"containerPort":6379}],"readinessProbe":{"initialDelaySeconds":5,"periodSeconds":5,"tcpSocket":{"port":6379}},"resources":{"limits":{"cpu":"125m","memory":"300Mi"},"requests":{"cpu":"70m","memory":"200Mi"}},"volumeMounts":[{"mountPath":"/data","name":"redis-data"}]}],"volumes":[{"emptyDir":{},"name":"redis-data"}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: redis-cart
+    namespace: microservices
+    resourceVersion: "674865"
+    uid: 52af723e-84b5-420b-ac4d-8e4df716a31a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: redis-cart
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: redis-cart
+      spec:
+        containers:
+        - image: redis:alpine
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 6379
+            timeoutSeconds: 1
+          name: redis
+          ports:
+          - containerPort: 6379
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 6379
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 125m
+              memory: 300Mi
+            requests:
+              cpu: 70m
+              memory: 200Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data
+            name: redis-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: redis-data
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:20Z"
+      lastUpdateTime: "2026-07-17T16:31:32Z"
+      message: ReplicaSet "redis-cart-5c6f5bbbd9" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T16:55:00Z"
+      lastUpdateTime: "2026-08-25T16:55:00Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"shippingservice","namespace":"microservices"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"shippingservice"}},"template":{"metadata":{"labels":{"app":"shippingservice"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"50051"}],"image":"gcr.io/google-samples/microservices-demo/shippingservice:v0.8.0","livenessProbe":{"grpc":{"port":50051},"periodSeconds":5},"name":"service","ports":[{"containerPort":50051}],"readinessProbe":{"grpc":{"port":50051},"periodSeconds":5}}]}}}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    generation: 1
+    name: shippingservice
+    namespace: microservices
+    resourceVersion: "689476"
+    uid: 9458790f-feed-46ac-b40d-9aa735e0edce
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: shippingservice
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: shippingservice
+      spec:
+        containers:
+        - env:
+          - name: PORT
+            value: "50051"
+          image: gcr.io/google-samples/microservices-demo/shippingservice:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 50051
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: service
+          ports:
+          - containerPort: 50051
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            grpc:
+              port: 50051
+              service: ""
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-07-17T16:31:19Z"
+      lastUpdateTime: "2026-07-17T16:31:29Z"
+      message: ReplicaSet "shippingservice-556d7b9d49" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-25T22:53:21Z"
+      lastUpdateTime: "2026-08-25T22:53:21Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,327 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"adservice","namespace":"microservices"},"spec":{"ports":[{"port":9555,"protocol":"TCP","targetPort":9555}],"selector":{"app":"adservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: adservice
+    namespace: microservices
+    resourceVersion: "522806"
+    uid: db32384a-91c1-46bd-b0f6-9cde18aac92c
+  spec:
+    clusterIP: 10.99.200.32
+    clusterIPs:
+    - 10.99.200.32
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 9555
+      protocol: TCP
+      targetPort: 9555
+    selector:
+      app: adservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"cartservice","namespace":"microservices"},"spec":{"ports":[{"port":7070,"protocol":"TCP","targetPort":7070}],"selector":{"app":"cartservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: cartservice
+    namespace: microservices
+    resourceVersion: "522811"
+    uid: a4902333-cf76-445a-90a1-f4cb518728c7
+  spec:
+    clusterIP: 10.99.59.236
+    clusterIPs:
+    - 10.99.59.236
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 7070
+      protocol: TCP
+      targetPort: 7070
+    selector:
+      app: cartservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"checkoutservice","namespace":"microservices"},"spec":{"ports":[{"port":5050,"protocol":"TCP","targetPort":5050}],"selector":{"app":"checkoutservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: checkoutservice
+    namespace: microservices
+    resourceVersion: "522828"
+    uid: b7b5e345-6c69-4be3-9b9a-33624c2094ef
+  spec:
+    clusterIP: 10.109.52.54
+    clusterIPs:
+    - 10.109.52.54
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 5050
+      protocol: TCP
+      targetPort: 5050
+    selector:
+      app: checkoutservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"currencyservice","namespace":"microservices"},"spec":{"ports":[{"port":7000,"protocol":"TCP","targetPort":7000}],"selector":{"app":"currencyservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: currencyservice
+    namespace: microservices
+    resourceVersion: "522774"
+    uid: ee590cf8-4563-45ff-929a-83286e7ec585
+  spec:
+    clusterIP: 10.109.178.255
+    clusterIPs:
+    - 10.109.178.255
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 7000
+      protocol: TCP
+      targetPort: 7000
+    selector:
+      app: currencyservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"emailservice","namespace":"microservices"},"spec":{"ports":[{"port":5000,"protocol":"TCP","targetPort":8080}],"selector":{"app":"emailservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: emailservice
+    namespace: microservices
+    resourceVersion: "522680"
+    uid: 136bd771-4ff2-4960-b66d-56da5d7d4fb0
+  spec:
+    clusterIP: 10.106.214.77
+    clusterIPs:
+    - 10.106.214.77
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: emailservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"frontend","namespace":"microservices"},"spec":{"ports":[{"port":80,"protocol":"TCP","targetPort":8080}],"selector":{"app":"frontend"},"type":"LoadBalancer"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: frontend
+    namespace: microservices
+    resourceVersion: "522839"
+    uid: 262618d6-8eeb-4c31-a810-898b02ad060a
+  spec:
+    allocateLoadBalancerNodePorts: true
+    clusterIP: 10.104.172.230
+    clusterIPs:
+    - 10.104.172.230
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - nodePort: 32344
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: frontend
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"paymentservice","namespace":"microservices"},"spec":{"ports":[{"port":50051,"protocol":"TCP","targetPort":50051}],"selector":{"app":"paymentservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: paymentservice
+    namespace: microservices
+    resourceVersion: "522748"
+    uid: 1edfaf7f-ff1d-45b8-9fb8-269994302c77
+  spec:
+    clusterIP: 10.107.125.195
+    clusterIPs:
+    - 10.107.125.195
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 50051
+      protocol: TCP
+      targetPort: 50051
+    selector:
+      app: paymentservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"productcatalogservice","namespace":"microservices"},"spec":{"ports":[{"port":3550,"protocol":"TCP","targetPort":3550}],"selector":{"app":"productcatalogservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: productcatalogservice
+    namespace: microservices
+    resourceVersion: "522725"
+    uid: a9f723f3-4fe0-45cf-b97c-e8f6fef4813a
+  spec:
+    clusterIP: 10.109.121.239
+    clusterIPs:
+    - 10.109.121.239
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 3550
+      protocol: TCP
+      targetPort: 3550
+    selector:
+      app: productcatalogservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"recommendationservice","namespace":"microservices"},"spec":{"ports":[{"port":8080,"protocol":"TCP","targetPort":8080}],"selector":{"app":"recommendationservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: recommendationservice
+    namespace: microservices
+    resourceVersion: "522699"
+    uid: 35574e58-3b3c-4572-94b2-caf4e18d6cb9
+  spec:
+    clusterIP: 10.110.139.200
+    clusterIPs:
+    - 10.110.139.200
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: recommendationservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"redis-cart","namespace":"microservices"},"spec":{"ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis-cart"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: redis-cart
+    namespace: microservices
+    resourceVersion: "522823"
+    uid: bf4ab4e4-f451-42f3-951b-51c430addb4e
+  spec:
+    clusterIP: 10.99.117.130
+    clusterIPs:
+    - 10.99.117.130
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: redis-cart
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"shippingservice","namespace":"microservices"},"spec":{"ports":[{"port":50051,"protocol":"TCP","targetPort":50051}],"selector":{"app":"shippingservice"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-07-17T16:31:19Z"
+    name: shippingservice
+    namespace: microservices
+    resourceVersion: "522788"
+    uid: 2a876f60-e3f5-4e2c-b6e7-01799ce1abae
+  spec:
+    clusterIP: 10.97.159.148
+    clusterIPs:
+    - 10.97.159.148
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 50051
+      protocol: TCP
+      targetPort: 50051
+    selector:
+      app: shippingservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
