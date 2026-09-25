@@ -1,14 +1,17 @@
 # IntelliJ IDEA
 .idea/
 
+# Kubernetes credentials
+*kubeconfig*
+.kube/
+
+# Environment files
+.env
+.env.*
+
+# Private keys / certificates
+*.pem
+*.key
+
 # macOS
 .DS_Store
-
-# Kubernetes
-*.kubeconfig
-
-# Helm
-*.tgz
-
-# Temporary files
-*.tmp

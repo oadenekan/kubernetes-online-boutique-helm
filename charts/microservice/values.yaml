@@ -8,6 +8,7 @@ containerEnvVars:
     value: "valueone"
   - name: ENV_VAR_TWO
     value: "valuetwo"
+resources: {}
 
 servicePort: 8080
 serviceType: ClusterIP

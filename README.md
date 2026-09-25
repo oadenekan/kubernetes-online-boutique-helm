@@ -1,576 +1,1464 @@
-# Kubernetes Online Boutique Deployment with Helm and Helmfile
+# Kubernetes Online Boutique Deployment with Helm, Helmfile, Minikube and LKE
 
-## Project Overview
+A hands-on Kubernetes and DevOps project demonstrating how a multi-microservice application can be converted from standard Kubernetes manifests into reusable Helm charts, orchestrated with Helmfile, validated locally with Minikube, and deployed to a real managed Kubernetes environment using **Linode Kubernetes Engine (LKE)**.
 
-This project demonstrates the deployment and management of the Google Cloud Online Boutique microservices application using Kubernetes, Helm, and Helmfile.
+This project uses Google's **Online Boutique** sample application as the underlying microservices workload. The engineering work in this repository focuses on Kubernetes deployment, Helm templating, Helmfile orchestration, environment-specific configuration, cloud deployment, service exposure, workload scaling, validation, and infrastructure lifecycle management.
 
-The project was originally deployed using standard Kubernetes manifests with `kubectl`. The application was then converted into a Helm-based deployment to demonstrate how Helm charts and Helmfile can simplify the management of multiple microservices.
-
-The Online Boutique application consists of multiple independent microservices. Instead of maintaining separate Kubernetes deployment and service manifests for each application manually, this project uses reusable Helm charts and service-specific values files.
-
-Helmfile is then used to orchestrate the deployment of all services from a single configuration.
-
-## Technologies Used
-
-* Kubernetes
-* Minikube
-* Helm
-* Helmfile
-* Docker
-* YAML
-* Kubernetes Deployments
-* Kubernetes Services
-* ConfigMaps
-* Microservices Architecture
-
-## Application Architecture
-
-The application consists of the following microservices:
-
-* adservice
-* cartservice
-* checkoutservice
-* currencyservice
-* emailservice
-* frontend
-* paymentservice
-* productcatalogservice
-* recommendationservice
-* shippingservice
-* redis-cart
-
-The services communicate internally within the Kubernetes cluster.
-
-The frontend service provides the user-facing interface for the Online Boutique application.
-
-## Project Structure
-
-```text
-kubernetes-online-boutique-helm/
-│
-├── charts/
-│   ├── microservice/
-│   │   ├── Chart.yaml
-│   │   ├── values.yaml
-│   │   └── templates/
-│   │
-│   └── redis/
-│       ├── .helmignore
-│       ├── Chart.yaml
-│       ├── values.yaml
-│       └── templates/
-│
-├── manifests/
-│   ├── online-boutique-configmaps.yaml
-│   ├── online-boutique-deployments.yaml
-│   └── online-boutique-services.yaml
-│
-├── values/
-│   ├── ad-service-values.yaml
-│   ├── cart-service-values.yaml
-│   ├── checkout-service-values.yaml
-│   ├── currency-service-values.yaml
-│   ├── email-service-values.yaml
-│   ├── frontend-values.yaml
-│   ├── payment-service-values.yaml
-│   ├── productcatalog-service-values.yaml
-│   ├── recommendation-service-values.yaml
-│   ├── redis-values.yaml
-│   └── shipping-service-values.yaml
-│
-├── .gitignore
-├── .helmignore
-├── helmfile.yaml
-└── README.md
-```
-
-## Original Kubernetes Deployment
-
-Before converting the application to Helm, the Online Boutique application was deployed using standard Kubernetes manifests.
-
-The original Kubernetes manifests were exported and retained in the repository for reference.
-
-These include:
-
-```text
-manifests/online-boutique-deployments.yaml
-manifests/online-boutique-services.yaml
-manifests/online-boutique-configmaps.yaml
-```
-
-The original deployment used Kubernetes Deployments and Services to manage the microservices.
-
-The Helm implementation provides a more reusable and scalable approach for managing the same infrastructure.
-
-## Helm Chart Design
-
-Two Helm charts were created for the project.
-
-### Microservice Chart
-
-A reusable Helm chart was created for the Online Boutique microservices.
-
-The same chart is reused by multiple services, including:
-
-* adservice
-* cartservice
-* checkoutservice
-* currencyservice
-* emailservice
-* frontend
-* paymentservice
-* productcatalogservice
-* recommendationservice
-* shippingservice
-
-The chart contains reusable templates for Kubernetes resources such as:
-
-* Deployment
-* Service
-* ServiceAccount
-* HorizontalPodAutoscaler
-* Ingress
-
-The configuration for each service is provided through individual values files.
-
-For example, a service values file defines parameters such as:
-
-```yaml
-appName:
-appReplicas:
-appImage:
-appVersion:
-containerPort:
-servicePort:
-containerEnvVars:
-```
-
-This approach allows one reusable Helm chart to deploy multiple microservices with different configurations.
-
-## Redis Chart
-
-A separate Helm chart was created for the Redis Cart service.
-
-Redis has different deployment requirements from the other application services, so it is managed independently from the reusable microservice chart.
-
-## Helmfile Orchestration
-
-Helmfile is used to orchestrate all Helm releases.
-
-Instead of manually running individual Helm commands for each microservice, Helmfile manages all releases from a single configuration file.
-
-The Helmfile configuration references:
-
-* The reusable microservice chart
-* The Redis chart
-* Individual values files for each service
-
-Each service is deployed as an independent Helm release.
-
-Example deployment structure:
-
-```text
-Helmfile
-│
-├── adservice
-├── cartservice
-├── checkoutservice
-├── currencyservice
-├── emailservice
-├── frontend
-├── paymentservice
-├── productcatalogservice
-├── recommendationservice
-├── shippingservice
-└── rediscart
-```
-
-## Deploying the Application
-
-The application can be deployed using Helmfile.
-
-Run:
-
-```bash
-helmfile sync
-```
-
-Helmfile processes each release and performs the equivalent of Helm install or upgrade operations.
-
-During deployment, Helmfile builds the required chart dependencies and deploys each microservice.
-
-Example output:
-
-```text
-Building dependency release=redis
-Building dependency release=currencyservice
-Building dependency release=productcatalogservice
-Building dependency release=recommendationservice
-Building dependency release=paymentservice
-Building dependency release=shippingservice
-Building dependency release=adservice
-Building dependency release=frontendservice
-Building dependency release=checkoutservice
-Building dependency release=emailservice
-Building dependency release=cartservice
-```
-
-Helmfile then installs or upgrades the releases.
-
-Example:
-
-```text
-Release "rediscart" does not exist. Installing it now.
-Release "checkoutservice" does not exist. Installing it now.
-Release "currencyservice" does not exist. Installing it now.
-Release "frontendservice" does not exist. Installing it now.
-Release "cartservice" does not exist. Installing it now.
-```
-
-## Checking Helm Releases
-
-After deployment, Helm releases can be checked using:
-
-```bash
-helm list
-```
-
-Or:
-
-```bash
-helm ls
-```
-
-Helmfile releases can also be checked using:
-
-```bash
-helmfile list
-```
-
-This displays the Helm releases managed by Helmfile.
-
-## Checking Kubernetes Pods
-
-After running the Helmfile deployment, Kubernetes pods can be checked using:
-
-```bash
-kubectl get pods
-```
-
-Example output:
-
-```text
-NAME                                      READY   STATUS
-adservice-85d987c66-jvzw                  1/1     Running
-adservice-85d987c66-zc7jv                 1/1     Running
-cartservice-7847487d96-kmkhc              1/1     Running
-cartservice-7847487d96-qsx67              1/1     Running
-checkoutservice-5885b66fcc-ns8cn          1/1     Running
-checkoutservice-5885b66fcc-rwfgv          1/1     Running
-emailservice-7d7dccb79-gjzkg              1/1     Running
-emailservice-7d7dccb79-zdfs2              1/1     Running
-frontend-b8cd96f5c-61ck8                  1/1     Running
-paymentservice-7596f79c97-z6kpg           1/1     Running
-productcatalogservice-558bbf7d5f-qbskq    1/1     Running
-recommendationservice-5d7dd49f4-c8s5v     1/1     Running
-redis-cart-686d6f8c98-9rkpp               1/1     Running
-shippingservice-6fdd89d67-djzj8           1/1     Running
-```
-
-Most services successfully started and reached the `Running` state after deployment.
-
-## Known Issue: Currency Service CrashLoopBackOff
-
-During one of the Helmfile deployments, the `currencyservice` pods entered a `CrashLoopBackOff` state.
-
-The affected pods were:
-
-```text
-currencyservice-669585dd-jgnvf
-currencyservice-669585dd-xfvwd
-```
-
-Example status:
-
-```text
-READY   STATUS             RESTARTS
-0/1     CrashLoopBackOff   6
-0/1     CrashLoopBackOff   6
-```
-
-This indicates that the container starts but repeatedly crashes.
-
-This is an important Kubernetes troubleshooting scenario because a successful Helm installation does not necessarily mean that every application container is healthy.
-
-Helm and Helmfile can report a release as successfully deployed while an application running inside the Kubernetes cluster experiences runtime failures.
-
-The following commands can be used to investigate the issue:
-
-```bash
-kubectl logs <currencyservice-pod-name>
-```
-
-For example:
-
-```bash
-kubectl logs currencyservice-669585dd-jgnvf
-```
-
-The previous container logs can also be inspected using:
-
-```bash
-kubectl logs <currencyservice-pod-name> --previous
-```
-
-Pod events and configuration can be inspected using:
-
-```bash
-kubectl describe pod <currencyservice-pod-name>
-```
-
-For example:
-
-```bash
-kubectl describe pod currencyservice-669585dd-jgnvf
-```
-
-The deployment can also be inspected using:
-
-```bash
-kubectl describe deployment currencyservice
-```
-
-Possible areas to investigate include:
-
-* Incorrect environment variables
-* Incorrect container arguments
-* Missing dependencies
-* Incorrect service configuration
-* Incorrect image configuration
-* Incorrect port configuration
-* Application startup errors
-
-This issue will be investigated as part of the Kubernetes troubleshooting process.
-
-## Helmfile Sync
-
-To deploy or update all services:
-
-```bash
-helmfile sync
-```
-
-This command:
-
-1. Reads the Helmfile configuration.
-2. Processes all defined releases.
-3. Builds chart dependencies.
-4. Performs Helm install operations for new releases.
-5. Performs Helm upgrade operations for existing releases.
-
-This provides a single command for managing the complete microservices application.
-
-## Helmfile List
-
-To view all releases managed by Helmfile:
-
-```bash
-helmfile list
-```
-
-This provides visibility into the releases configured within the Helmfile project.
-
-## Destroying the Application
-
-Helmfile can also remove all deployed releases.
-
-Run:
-
-```bash
-helmfile destroy
-```
-
-This removes the Helm releases managed by the Helmfile configuration.
-
-After destruction, Kubernetes resources can be checked using:
-
-```bash
-kubectl get pods
-```
-
-And:
-
-```bash
-helm list
-```
-
-This demonstrates the complete lifecycle management of the application:
-
-```text
-Deploy
-   ↓
-helmfile sync
-   ↓
-Verify
-   ↓
-helmfile list
-kubectl get pods
-   ↓
-Destroy
-   ↓
-helmfile destroy
-```
-
-## Helm Commands Used During Development
-
-Individual Helm charts can be validated using:
-
-```bash
-helm lint charts/microservice
-```
-
-A Helm chart can be rendered locally without installing it:
-
-```bash
-helm template <release-name> charts/microservice
-```
-
-A service-specific values file can be applied during template rendering:
-
-```bash
-helm template \
-  -f values/<service-values-file>.yaml \
-  <release-name> \
-  charts/microservice
-```
-
-This allows Helm templates to be tested before deployment.
-
-## Kubernetes Commands Used
-
-Check pods:
-
-```bash
-kubectl get pods
-```
-
-Check pods across all namespaces:
-
-```bash
-kubectl get pods -A
-```
-
-Check all resources in a namespace:
-
-```bash
-kubectl get all -n <namespace>
-```
-
-Check available namespaces:
-
-```bash
-kubectl get namespaces
-```
-
-Check pod logs:
-
-```bash
-kubectl logs <pod-name>
-```
-
-Describe a pod:
-
-```bash
-kubectl describe pod <pod-name>
-```
-
-## Screenshots
-
-The project includes screenshots demonstrating the deployment process.
-
-### Kubernetes Pods
-
-The Kubernetes pod output demonstrates the deployment of the Online Boutique microservices using Helm and Helmfile.
-
-The majority of the services successfully reached the `Running` state.
-
-The screenshot also captured a `CrashLoopBackOff` issue affecting the `currencyservice`, which demonstrates a real Kubernetes troubleshooting scenario.
-
-Screenshot file:
-
-```text
-04-kubernetes-pods.png
-```
-
-### Helmfile Deployment
-
-The Helmfile sync output demonstrates Helmfile processing multiple releases and installing the microservices.
-
-The output is extensive because multiple Helm releases are deployed.
-
-The screenshot captures part of the deployment process, including:
-
-* Building Helm chart dependencies
-* Installing the Redis release
-* Installing microservice releases
-* Deploying services through Helmfile
-
-Screenshot file:
-
-```text
-02-helmfile-sync.png
-```
-
-## Key Learning Outcomes
-
-Through this project, I gained practical experience with:
-
-* Deploying applications to Kubernetes
-* Managing Kubernetes Deployments and Services
-* Converting Kubernetes deployments into Helm charts
-* Creating reusable Helm templates
-* Using values files for environment-specific configuration
-* Managing multiple microservices using a reusable Helm chart
-* Creating a separate Helm chart for Redis
-* Using Helmfile to orchestrate multiple Helm releases
-* Deploying multiple services with a single command
-* Managing Helm release lifecycle
-* Destroying infrastructure using Helmfile
-* Troubleshooting Kubernetes pod failures
-* Investigating `CrashLoopBackOff` errors
-* Understanding the difference between successful infrastructure deployment and application runtime health
-
-## Future Improvements
-
-Future improvements to this project include:
-
-* Investigating and resolving the `currencyservice` CrashLoopBackOff issue
-* Adding readiness and liveness probes consistently across services
-* Deploying the application to Linode Kubernetes Engine (LKE)
-* Configuring cloud-based load balancing
-* Adding a CI/CD pipeline using GitHub Actions
-* Adding automated Helm chart validation
-* Adding Helm chart testing
-* Implementing monitoring using Prometheus and Grafana
-* Adding centralized logging
-* Deploying the application using Infrastructure as Code
+---
 
 ## Author
 
 **Olusola Ayeni**
 
-DevOps and Cloud Engineer
+---
 
-### Skills
+## Project Overview
 
-* AWS
-* Kubernetes
-* Docker
-* Helm
-* Helmfile
-* Jenkins
-* GitHub Actions
-* Terraform
-* Linux
-* CI/CD
-* Cloud Infrastructure
+Online Boutique is a cloud-native e-commerce application composed of multiple microservices.
+
+This project was used to build practical experience with:
+
+- Kubernetes
+- Helm
+- Helmfile
+- Minikube
+- Linode Kubernetes Engine (LKE)
+- Kubernetes contexts
+- Kubernetes namespaces
+- Kubernetes Services
+- LoadBalancers
+- Kubernetes scheduling
+- Horizontal scaling
+- Environment-specific configuration
+- Cloud infrastructure lifecycle management
+- Git and GitHub documentation
+
+The project progressed through the following stages:
+
+```text
+Kubernetes Manifests
+        |
+        v
+Reusable Helm Charts
+        |
+        v
+Helmfile Orchestration
+        |
+        v
+Minikube Deployment
+        |
+        v
+LKE-Specific Configuration
+        |
+        v
+Linode Kubernetes Engine
+        |
+        v
+Public LoadBalancer
+        |
+        v
+Browser Verification
+        |
+        v
+Horizontal Scaling
+        |
+        v
+Multi-Node Scheduling
+        |
+        v
+Cloud Resource Cleanup
+```
+
+---
+
+## Project Objectives
+
+The main objectives of this project were to:
+
+- Deploy a multi-service application to Kubernetes.
+- Understand Kubernetes Deployments and Services.
+- Convert repeated Kubernetes manifests into reusable Helm templates.
+- Manage multiple microservices using Helmfile.
+- Separate local Minikube configuration from cloud LKE configuration.
+- Validate the deployment locally before using cloud infrastructure.
+- Deploy the application to Linode Kubernetes Engine.
+- Isolate the cloud deployment using a dedicated Kubernetes namespace.
+- Expose the frontend publicly through an LKE LoadBalancer.
+- Verify the application from a web browser.
+- Scale workloads and observe Kubernetes scheduling behaviour.
+- Practise safe destruction of cloud resources after testing.
+
+---
+
+## Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Kubernetes | Container orchestration |
+| Helm | Kubernetes package management and templating |
+| Helmfile | Declarative orchestration of multiple Helm releases |
+| Minikube | Local Kubernetes testing |
+| Linode Kubernetes Engine | Managed cloud Kubernetes cluster |
+| Akamai Cloud | Cloud infrastructure platform |
+| kubectl | Kubernetes command-line administration |
+| YAML | Kubernetes and Helm configuration |
+| Git | Version control |
+| GitHub | Source-code hosting and project documentation |
+
+---
+
+# Application Architecture
+
+The Online Boutique application contains the following components:
+
+- Ad Service
+- Cart Service
+- Checkout Service
+- Currency Service
+- Email Service
+- Frontend
+- Payment Service
+- Product Catalog Service
+- Recommendation Service
+- Shipping Service
+- Redis Cart
+
+The simplified application architecture is:
+
+```text
+                        Internet
+                           |
+                           v
+                  LKE LoadBalancer
+                           |
+                           v
+                    Frontend Service
+                           |
+                           v
+                     Frontend Pods
+                           |
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+     Cart Service     Product Catalog   Checkout Service
+          |                Service            |
+          v                                   |
+      Redis Cart                              |
+                                              |
+                         +--------------------+-------------------+
+                         |                    |                   |
+                         v                    v                   v
+                  Payment Service      Shipping Service     Email Service
+
+                         +----------------------------------------+
+                         |
+                         +--> Currency Service
+                         +--> Recommendation Service
+                         +--> Ad Service
+```
+
+Backend services are exposed internally using Kubernetes `ClusterIP` Services.
+
+The frontend is exposed externally using a Kubernetes `LoadBalancer` Service.
+
+---
+
+# Repository Structure
+
+```text
+kubernetes-online-boutique-helm/
+│
+├── charts/
+│   │
+│   ├── microservice/
+│   │   ├── templates/
+│   │   │   ├── deployment.yaml
+│   │   │   └── service.yaml
+│   │   ├── .helmignore
+│   │   ├── Chart.yaml
+│   │   └── values.yaml
+│   │
+│   └── redis/
+│
+├── manifests/
+│
+├── screenshots/
+│
+├── values/
+│   └── lke/
+│       ├── adservice.yaml
+│       ├── cartservice.yaml
+│       ├── checkoutservice.yaml
+│       ├── currencyservice.yaml
+│       ├── emailservice.yaml
+│       ├── frontend.yaml
+│       ├── paymentservice.yaml
+│       ├── productcatalogservice.yaml
+│       ├── recommendationservice.yaml
+│       └── shippingservice.yaml
+│
+├── helmfile.yaml
+├── helmfile-lke.yaml
+└── README.md
+```
+
+---
+
+# 1. Initial Kubernetes Deployment
+
+The first stage of the project used standard Kubernetes manifests.
+
+These manifests defined resources such as:
+
+- Deployments
+- Services
+- Replica counts
+- Container images
+- Environment variables
+- Container ports
+
+This stage helped establish how the different Online Boutique microservices interact inside Kubernetes.
+
+The application was initially tested using Minikube.
+
+---
+
+# 2. Converting Kubernetes Manifests to Helm
+
+Maintaining separate Kubernetes manifests for every microservice creates significant duplication.
+
+A reusable Helm chart was therefore created under:
+
+```text
+charts/microservice/
+```
+
+The chart contains generic templates for resources such as:
+
+```text
+Deployment
+Service
+```
+
+Values supplied to the chart determine the configuration of each microservice.
+
+Examples include:
+
+```yaml
+appName:
+appImage:
+appVersion:
+appReplicas:
+containerPort:
+containerEnvVars:
+resources:
+```
+
+This allows the same Helm chart to be reused for multiple services, including:
+
+```text
+adservice
+cartservice
+checkoutservice
+currencyservice
+emailservice
+frontend
+paymentservice
+productcatalogservice
+recommendationservice
+shippingservice
+```
+
+Redis uses a separate Helm chart because its configuration differs from the generic application microservices.
+
+---
+
+# 3. Helmfile Orchestration
+
+Installing every microservice individually with Helm would require managing many separate commands.
+
+Helmfile was introduced to manage the complete application declaratively.
+
+Instead of running multiple `helm install` commands, all application releases can be synchronised using:
+
+```bash
+helmfile sync
+```
+
+The Helm releases include:
+
+```text
+adservice
+cartservice
+checkoutservice
+currencyservice
+emailservice
+frontendservice
+paymentservice
+productcatalogservice
+recommendationservice
+rediscart
+shippingservice
+```
+
+An important naming distinction in this project is:
+
+```text
+Helm release:           frontendservice
+Kubernetes Deployment: frontend
+Kubernetes Service:    frontend
+```
+
+Therefore:
+
+```bash
+helm list
+```
+
+shows:
+
+```text
+frontendservice
+```
+
+while:
+
+```bash
+kubectl get deployment
+```
+
+and:
+
+```bash
+kubectl get svc
+```
+
+show:
+
+```text
+frontend
+```
+
+---
+
+# 4. Local Deployment with Minikube
+
+Before deploying to the cloud, the Helm and Helmfile configuration was validated locally using Minikube.
+
+The active Kubernetes context was checked using:
+
+```bash
+kubectl config current-context
+```
+
+For the local environment, the result was:
+
+```text
+minikube
+```
+
+Application resources were verified using:
+
+```bash
+kubectl get pods
+```
+
+Helm releases were checked using:
+
+```bash
+helm list -A
+```
+
+This provided a safe environment to validate the Helm charts before introducing cloud infrastructure.
+
+---
+
+# 5. Understanding Kubernetes Contexts
+
+One of the important lessons from the project was that the Kubernetes context determines which cluster receives commands.
+
+For example:
+
+```bash
+kubectl config current-context
+```
+
+may return:
+
+```text
+minikube
+```
+
+when using the local cluster.
+
+After configuring LKE, the active context changes to the LKE cluster context.
+
+The filename:
+
+```text
+helmfile-lke.yaml
+```
+
+does **not** automatically cause Helmfile to deploy to LKE.
+
+Helm and Helmfile communicate with whichever Kubernetes cluster is defined by the active kubeconfig/context.
+
+This makes checking the context before deployment an important operational habit:
+
+```bash
+kubectl config current-context
+kubectl get nodes
+```
+
+---
+
+# 6. Understanding Kubernetes Namespaces
+
+A dedicated namespace was used for the LKE deployment:
+
+```text
+online-boutique
+```
+
+It was created using:
+
+```bash
+kubectl create namespace online-boutique
+```
+
+Creating a namespace does not automatically switch the current namespace.
+
+For example:
+
+```bash
+kubectl create namespace online-boutique
+```
+
+only creates the namespace.
+
+Resources can be explicitly queried using:
+
+```bash
+kubectl get pods -n online-boutique
+```
+
+Helmfile can also be explicitly instructed to target the namespace:
+
+```bash
+helmfile -f helmfile-lke.yaml \
+  --namespace online-boutique \
+  sync
+```
+
+---
+
+# 7. LKE-Specific Configuration
+
+A separate Helmfile was created for the cloud deployment:
+
+```text
+helmfile-lke.yaml
+```
+
+LKE-specific values are stored under:
+
+```text
+values/lke/
+```
+
+This separates cloud-specific configuration from local Minikube configuration.
+
+The directory contains configuration for the individual microservices, including:
+
+```text
+values/lke/adservice.yaml
+values/lke/cartservice.yaml
+values/lke/checkoutservice.yaml
+values/lke/currencyservice.yaml
+values/lke/emailservice.yaml
+values/lke/frontend.yaml
+values/lke/paymentservice.yaml
+values/lke/productcatalogservice.yaml
+values/lke/recommendationservice.yaml
+values/lke/shippingservice.yaml
+```
+
+The frontend configuration uses a Kubernetes `LoadBalancer` Service so that the application can be reached from outside the Kubernetes cluster.
+
+---
+
+# 8. Creating the LKE Cluster
+
+A Kubernetes cluster was created using Linode Kubernetes Engine.
+
+The environment contained multiple worker nodes.
+
+After downloading the LKE kubeconfig, the local shell was configured to communicate with the LKE cluster.
+
+The active Kubernetes context was verified using:
+
+```bash
+kubectl config current-context
+```
+
+The LKE worker nodes were then verified using:
+
+```bash
+kubectl get nodes -o wide
+```
+
+Both worker nodes reached:
+
+```text
+STATUS: Ready
+```
+
+This confirmed that the Kubernetes cluster was operational and that the worker nodes were available for scheduling workloads.
+
+### LKE Worker Nodes
+
+The worker-node status was captured as deployment evidence:
+
+![LKE worker nodes ready](screenshots/08-lke-worker-nodes-ready.png)
+
+---
+
+# 9. Creating the LKE Namespace
+
+The application namespace was created only after confirming that `kubectl` was targeting the LKE cluster.
+
+```bash
+kubectl create namespace online-boutique
+```
+
+The namespace was then confirmed using:
+
+```bash
+kubectl get namespaces
+```
+
+This avoided accidentally creating the namespace or deploying the cloud workload back into Minikube.
+
+---
+
+# 10. Deploying Online Boutique to LKE
+
+Before deployment, the target environment was verified again:
+
+```bash
+kubectl config current-context
+```
+
+and:
+
+```bash
+kubectl get nodes
+```
+
+The Online Boutique application was then deployed using:
+
+```bash
+helmfile -f helmfile-lke.yaml \
+  --namespace online-boutique \
+  sync
+```
+
+Helmfile built the required chart dependencies and deployed all application releases to the LKE cluster.
+
+---
+
+# 11. Verifying Helm Releases
+
+The Helm releases were verified using:
+
+```bash
+helm list -n online-boutique
+```
+
+The following releases were successfully deployed:
+
+```text
+adservice
+cartservice
+checkoutservice
+currencyservice
+emailservice
+frontendservice
+paymentservice
+productcatalogservice
+recommendationservice
+rediscart
+shippingservice
+```
+
+All releases reported:
+
+```text
+STATUS: deployed
+```
+
+---
+
+# 12. Verifying Kubernetes Deployments
+
+The Kubernetes Deployments were checked using:
+
+```bash
+kubectl get deployments -n online-boutique
+```
+
+The initial deployment showed:
+
+```text
+READY        1/1
+UP-TO-DATE   1
+AVAILABLE    1
+```
+
+for all application deployments.
+
+This confirmed that Kubernetes had successfully created the required workloads.
+
+---
+
+# 13. Verifying Kubernetes Pods
+
+The pods were inspected using:
+
+```bash
+kubectl get pods -n online-boutique -o wide
+```
+
+The application pods reached:
+
+```text
+READY      1/1
+STATUS     Running
+RESTARTS   0
+```
+
+The `NODE` column was also used to identify which LKE worker node was running each pod.
+
+This confirmed successful scheduling of application containers onto LKE worker infrastructure.
+
+---
+
+# 14. Kubernetes Services
+
+The application Services were checked using:
+
+```bash
+kubectl get svc -n online-boutique
+```
+
+Backend services were exposed using:
+
+```text
+ClusterIP
+```
+
+including:
+
+```text
+adservice
+cartservice
+checkoutservice
+currencyservice
+emailservice
+paymentservice
+productcatalogservice
+recommendationservice
+redis-cart
+shippingservice
+```
+
+These services are intended for communication inside the Kubernetes cluster.
+
+The frontend Service is named:
+
+```text
+frontend
+```
+
+and was exposed using:
+
+```text
+LoadBalancer
+```
+
+It can be checked directly using:
+
+```bash
+kubectl get svc frontend -n online-boutique
+```
+
+### LKE Frontend LoadBalancer
+
+The frontend Service successfully received an external LoadBalancer address from LKE:
+
+![LKE frontend LoadBalancer](screenshots/11-lke-services-loadbalancer.png)
+
+---
+
+# 15. Public Application Access
+
+The frontend was checked using:
+
+```bash
+kubectl get svc frontend -n online-boutique
+```
+
+The Service showed:
+
+```text
+TYPE: LoadBalancer
+PORT: 80
+```
+
+The application was then accessed using:
+
+```text
+http://<EXTERNAL-IP>
+```
+
+The Online Boutique homepage loaded successfully in a browser.
+
+This confirmed the complete request path:
+
+```text
+Internet
+   |
+   v
+LKE LoadBalancer
+   |
+   v
+Frontend Kubernetes Service
+   |
+   v
+Frontend Pod
+   |
+   v
+Backend Microservices
+```
+
+---
+
+# 16. Browser Verification
+
+Successful browser access provided the final end-to-end test of the deployment.
+
+The browser confirmed that:
+
+- The Online Boutique frontend loaded correctly.
+- Product images were displayed.
+- Product information was returned.
+- The application was externally reachable.
+- The frontend could communicate successfully with backend services.
+- Traffic successfully reached the application through the LKE LoadBalancer.
+
+Healthy Kubernetes pods alone do not prove that an application is usable by an end user.
+
+The browser test therefore provided important end-to-end validation.
+
+### Online Boutique Running on LKE
+
+![Online Boutique running on LKE](screenshots/13-online-boutique-browser-access.png)
+
+---
+
+# 17. Scaling the Frontend
+
+The frontend was temporarily scaled from one replica to three replicas:
+
+```bash
+kubectl scale deployment frontend \
+  --replicas=3 \
+  -n online-boutique
+```
+
+The result was checked using:
+
+```bash
+kubectl get pods -n online-boutique -o wide
+```
+
+Three frontend pods were successfully created.
+
+The output showed frontend replicas running across both LKE worker nodes.
+
+For example:
+
+```text
+Frontend Replica 1
+      |
+      +------ Worker Node 1
+
+Frontend Replica 2
+      |
+      +------ Worker Node 1
+
+Frontend Replica 3
+      |
+      +------ Worker Node 2
+```
+
+This demonstrated that Kubernetes could schedule replicas across multiple nodes within the cluster.
+
+The manual scaling operation changed the live Kubernetes Deployment only.
+
+It did not modify the replica value stored in the Helm source configuration.
+
+A later Helm reconciliation could therefore return the deployment to the replica count declared in Helm values.
+
+### Frontend Replicas Across LKE Worker Nodes
+
+![Frontend replicas across LKE worker nodes](screenshots/14-frontend-three-replicas-multi-node.png)
+
+---
+
+# 18. Final Deployment Validation
+
+The following commands were used to verify the completed deployment:
+
+```bash
+kubectl config current-context
+```
+
+```bash
+kubectl get nodes -o wide
+```
+
+```bash
+kubectl get namespace online-boutique
+```
+
+```bash
+kubectl get pods -n online-boutique -o wide
+```
+
+```bash
+kubectl get deployments -n online-boutique
+```
+
+```bash
+kubectl get svc -n online-boutique
+```
+
+```bash
+helm list -n online-boutique
+```
+
+Together these commands verified:
+
+```text
+LKE Kubernetes context          ✓
+Worker nodes Ready              ✓
+Dedicated namespace             ✓
+Helm releases deployed          ✓
+Deployments available           ✓
+Pods Running                    ✓
+Zero initial pod restarts       ✓
+ClusterIP backend services      ✓
+Frontend LoadBalancer           ✓
+External browser access         ✓
+Frontend horizontal scaling     ✓
+Multi-node scheduling           ✓
+```
+
+---
+
+# 19. Project Screenshots
+
+Screenshots documenting the different stages of the project are stored in:
+
+```text
+screenshots/
+```
+
+A chronological naming convention is used.
+
+Example screenshot structure:
+
+```text
+01-project-structure.png
+02-helmfile-sync.png
+03-helm-list.png
+04-kubernetes-pods.png
+05-kubernetes-services.png
+06-helmfile-destroy.png
+07-lke-current-context.png
+08-lke-worker-nodes-ready.png
+09-lke-pods-running.png
+10-lke-deployments-ready.png
+11-lke-services-loadbalancer.png
+12-lke-helm-releases.png
+13-online-boutique-browser-access.png
+14-frontend-three-replicas-multi-node.png
+```
+
+The earlier screenshots document the Helm and Minikube phase.
+
+The later screenshots document the LKE cloud deployment and final application validation.
+
+Public infrastructure IP addresses may be redacted where they are not necessary to demonstrate the project.
+
+Sensitive data such as the following must never be committed:
+
+- API tokens
+- Passwords
+- Private keys
+- Kubeconfig credentials
+- Cloud access credentials
+- Kubernetes Secrets containing real credentials
+
+---
+
+# 20. Cleaning Up the LKE Environment
+
+Cloud infrastructure should not be left running unnecessarily after completing the demonstration.
+
+The Helm releases can first be removed using:
+
+```bash
+helmfile -f helmfile-lke.yaml \
+  --namespace online-boutique \
+  destroy
+```
+
+The namespace can then be checked:
+
+```bash
+kubectl get all -n online-boutique
+```
+
+After confirming that the application resources have been removed:
+
+```bash
+kubectl delete namespace online-boutique
+```
+
+The LKE cluster can then be deleted from the Akamai/Linode Cloud Manager.
+
+After deleting the Kubernetes cluster, the cloud account should also be checked for remaining infrastructure such as:
+
+```text
+NodeBalancers
+Block Storage volumes
+Compute resources
+Reserved IP addresses
+Project-specific firewall resources
+```
+
+This helps prevent unnecessary cloud charges.
+
+---
+
+# Key Learning Outcomes
+
+This project provided practical experience beyond simply running Kubernetes commands.
+
+## Kubernetes Context Management
+
+I learned that the active Kubernetes context determines which cluster receives commands.
+
+Checking:
+
+```bash
+kubectl config current-context
+```
+
+before deployment is important when working with multiple environments such as Minikube and LKE.
+
+---
+
+## Kubernetes Namespace Management
+
+I learned that:
+
+```bash
+kubectl create namespace online-boutique
+```
+
+creates a namespace but does not automatically make it the current namespace.
+
+Explicit namespace targeting helps reduce deployment mistakes.
+
+For example:
+
+```bash
+kubectl get pods -n online-boutique
+```
+
+---
+
+## Reusable Helm Charts
+
+Instead of maintaining nearly identical Kubernetes YAML for every microservice, a reusable Helm chart allows common infrastructure patterns to be defined once and parameterised through values.
+
+This improves:
+
+- Maintainability
+- Consistency
+- Reusability
+- Scalability of configuration
+
+---
+
+## Helm vs Helmfile
+
+Helm manages application releases.
+
+Helmfile coordinates multiple Helm releases as a larger application deployment.
+
+For a microservices architecture, Helmfile makes it possible to manage the complete application stack declaratively.
+
+---
+
+## Environment Separation
+
+Separating Minikube and LKE configuration reduces coupling between local development and cloud environments.
+
+Environment-specific values can change without duplicating the underlying Helm charts.
+
+---
+
+## Kubernetes Services
+
+I gained practical understanding of the difference between:
+
+```text
+ClusterIP
+```
+
+and:
+
+```text
+LoadBalancer
+```
+
+`ClusterIP` is suitable for internal microservice communication.
+
+`LoadBalancer` allows an application to receive external traffic.
+
+---
+
+## Kubernetes Scheduling
+
+Applications are deployed to a Kubernetes cluster rather than manually deployed to specific worker nodes.
+
+The Kubernetes scheduler determines where pods should run.
+
+By scaling the frontend to three replicas and examining:
+
+```bash
+kubectl get pods -n online-boutique -o wide
+```
+
+I was able to observe frontend replicas running across both LKE worker nodes.
+
+---
+
+## Desired State vs Live State
+
+Running:
+
+```bash
+kubectl scale deployment frontend --replicas=3
+```
+
+changes the live Kubernetes Deployment.
+
+It does not automatically update the desired state stored in Helm values.
+
+This demonstrated the importance of keeping Infrastructure-as-Code and live-cluster configuration aligned.
+
+---
+
+## End-to-End Validation
+
+A Kubernetes deployment should not be considered successful simply because pods are running.
+
+The application should also be validated from the end-user perspective.
+
+In this project, successful browser access through the LKE LoadBalancer provided that final validation.
+
+---
+
+## Cloud Cost Awareness
+
+Cloud Kubernetes environments generate infrastructure costs.
+
+Provisioning resources is only part of the lifecycle.
+
+A complete workflow also includes:
+
+```text
+Provision
+Deploy
+Validate
+Document
+Destroy
+Verify Cleanup
+```
+
+This project reinforced the importance of destroying temporary infrastructure when it is no longer required.
+
+---
+
+# Future Improvements
+
+The current implementation successfully demonstrates the Kubernetes deployment lifecycle, but several improvements could move the environment closer to production-grade architecture.
+
+---
+
+## 1. HTTPS and TLS
+
+The current demonstration exposes the frontend over HTTP.
+
+A production-oriented version could:
+
+- Configure a domain name.
+- Issue TLS certificates.
+- Redirect HTTP traffic to HTTPS.
+- Automate certificate renewal.
+
+Tools such as `cert-manager` and Let's Encrypt could be introduced.
+
+---
+
+## 2. Kubernetes Ingress
+
+Instead of exposing the frontend directly using a `LoadBalancer` Service, an Ingress Controller could be introduced.
+
+A future architecture could look like:
+
+```text
+Internet
+   |
+   v
+LKE NodeBalancer
+   |
+   v
+Ingress Controller
+   |
+   v
+Ingress Resource
+   |
+   v
+Frontend Service
+   |
+   v
+Frontend Pods
+```
+
+This would provide more flexible HTTP routing and make it easier to expose additional applications.
+
+---
+
+## 3. Resource Requests and Limits
+
+CPU and memory requests and limits could be defined for each service.
+
+Example:
+
+```yaml
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+```
+
+This would allow Kubernetes to make better scheduling decisions and reduce the risk of one workload consuming excessive node resources.
+
+---
+
+## 4. Readiness and Liveness Probes
+
+Application health checks could be added using:
+
+- Readiness probes
+- Liveness probes
+- Startup probes
+
+These would allow Kubernetes to detect unhealthy application instances and prevent traffic from reaching containers that are not ready.
+
+---
+
+## 5. Horizontal Pod Autoscaling
+
+The frontend was manually scaled during this project.
+
+A future implementation could use a Horizontal Pod Autoscaler so that Kubernetes automatically adjusts replica counts based on demand.
+
+Example:
+
+```text
+Low Traffic
+    |
+    v
+2 Frontend Pods
+
+Traffic Increases
+    |
+    v
+Horizontal Pod Autoscaler
+    |
+    v
+Additional Frontend Pods
+```
+
+---
+
+## 6. Topology Spread and Pod Anti-Affinity
+
+Although frontend replicas were observed across both LKE worker nodes, Kubernetes was not explicitly instructed to distribute them.
+
+A production implementation could use:
+
+- Pod anti-affinity
+- Node affinity
+- Topology spread constraints
+
+This would improve resilience by reducing the chance of all replicas being placed on the same worker node.
+
+---
+
+## 7. CI/CD Pipeline
+
+Deployment could be automated using a CI/CD platform such as:
+
+- GitHub Actions
+- Jenkins
+
+A future pipeline could perform:
+
+```text
+Git Push
+   |
+   v
+YAML Validation
+   |
+   v
+Helm Lint
+   |
+   v
+Helm Template
+   |
+   v
+Helmfile Diff
+   |
+   v
+Automated Tests
+   |
+   v
+Deploy to Kubernetes
+```
+
+This would reduce manual deployment steps and introduce repeatable validation.
+
+---
+
+## 8. Monitoring and Observability
+
+Monitoring could be introduced using:
+
+- Prometheus
+- Grafana
+- Kubernetes Metrics Server
+- Centralised logging
+- Alerting
+
+This would provide visibility into:
+
+```text
+CPU utilisation
+Memory utilisation
+Pod health
+Application latency
+Application failures
+Node health
+Replica behaviour
+```
+
+---
+
+## 9. Secrets Management
+
+Sensitive configuration should not be stored directly in plain-text Helm values.
+
+Future versions could use:
+
+- Kubernetes Secrets
+- Sealed Secrets
+- External Secrets Operator
+- Cloud-based secret-management services
+
+---
+
+## 10. Multiple Environments
+
+The repository could be expanded to support:
+
+```text
+development
+staging
+production
+```
+
+while continuing to reuse the same Helm charts.
+
+For example:
+
+```text
+values/
+├── minikube/
+├── staging/
+└── production/
+```
+
+---
+
+## 11. Infrastructure as Code
+
+The LKE infrastructure was created through the cloud management interface.
+
+A future implementation could use Terraform to provision:
+
+```text
+LKE Cluster
+Worker Node Pools
+Networking
+DNS
+Supporting Cloud Resources
+```
+
+This would make the infrastructure reproducible, auditable, and version controlled.
+
+---
+
+## 12. Automated Post-Deployment Testing
+
+Automated tests could be added after deployment to verify:
+
+- Frontend availability
+- HTTP response codes
+- Pod readiness
+- Backend service connectivity
+- Helm release status
+
+The pipeline could fail automatically if the deployed application does not pass these checks.
+
+---
+
+# Project Result
+
+The Online Boutique microservices application was successfully deployed through the complete Kubernetes lifecycle:
+
+```text
+Standard Kubernetes Manifests
+             |
+             v
+Reusable Helm Charts
+             |
+             v
+Helmfile Orchestration
+             |
+             v
+Minikube Validation
+             |
+             v
+LKE-Specific Configuration
+             |
+             v
+Linode Kubernetes Engine
+             |
+             v
+Dedicated Kubernetes Namespace
+             |
+             v
+Healthy Microservices
+             |
+             v
+Public LoadBalancer
+             |
+             v
+Successful Browser Access
+             |
+             v
+Horizontal Frontend Scaling
+             |
+             v
+Multi-Node Scheduling
+             |
+             v
+Deployment Documentation
+             |
+             v
+Cloud Infrastructure Cleanup
+```
+
+The completed project demonstrates practical experience with:
+
+- Kubernetes workload management
+- Helm templating
+- Helmfile orchestration
+- Kubernetes contexts and namespaces
+- Local and cloud environment separation
+- Managed Kubernetes
+- Kubernetes Services
+- Cloud LoadBalancers
+- Workload scaling
+- Kubernetes scheduling
+- Deployment validation
+- Cloud-resource lifecycle management
+
+---
+
+# Upstream Application Attribution
+
+This repository uses **Google's Online Boutique** sample application as the underlying microservices workload.
+
+Online Boutique is an open-source cloud-native microservices demonstration application maintained by Google.
+
+The original application is available from the upstream repository:
+
+[GoogleCloudPlatform/microservices-demo](https://github.com/GoogleCloudPlatform/microservices-demo)
+
+The focus of this project is not the development of the Online Boutique application itself.
+
+The engineering work demonstrated in this repository focuses on:
+
+- Kubernetes deployment
+- Helm chart implementation
+- Helmfile orchestration
+- Minikube validation
+- LKE-specific configuration
+- Cloud Kubernetes deployment
+- Workload scaling
+- Service exposure
+- Deployment validation
+- Infrastructure cleanup
+
+Refer to the upstream Online Boutique repository for the original application source code and licensing information.
+
+---
+
+# Conclusion
+
+This project moved beyond deploying a single Kubernetes manifest and demonstrated a more complete DevOps workflow.
+
+It covered the progression from raw Kubernetes manifests through Helm abstraction, Helmfile orchestration, local Kubernetes validation, cloud deployment with LKE, public application exposure, scaling across worker nodes, end-to-end validation, evidence collection, and responsible cloud-resource cleanup.
+
+The result is a reusable Kubernetes deployment structure that can be extended further with:
+
+- CI/CD
+- Terraform
+- Ingress
+- HTTPS/TLS
+- Horizontal Pod Autoscaling
+- Monitoring and observability
+- Secrets management
+- Production-grade workload resilience
